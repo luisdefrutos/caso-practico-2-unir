@@ -1,0 +1,23 @@
+---
+- name: Push Docker image to Azure Container Registry
+  hosts: localhost
+  vars_files:
+    - credentials.yml
+  tasks:
+    - name: Login to Azure Container Registry
+      ansible.builtin.shell: |
+        podman login {{ acr_name }}.azurecr.io -u {{ acr_username }} -p {{ acr_password }}
+      register: login_output
+
+    - name: Push image to ACR
+      ansible.builtin.shell: |
+        podman push {{ acr_name }}.azurecr.io/{{ image_name }}:latest
+      register: push_output
+
+    - name: Show login result
+      ansible.builtin.debug:
+        var: login_output.stdout
+
+    - name: Show push result
+      ansible.builtin.debug:
+        var: push_output.stdout
