@@ -2,17 +2,22 @@
 - name: Push Docker image to Azure Container Registry
   hosts: localhost
   vars_files:
-    - credentials.yml
+    - credentials.yml   # Este archivo NO debe estar en el repo
+
   tasks:
     - name: Login to Azure Container Registry
       ansible.builtin.shell: |
-        podman login {{ acr_name }}.azurecr.io -u {{ acr_username }} -p {{ acr_password }}
+        podman login {{ acr_name }}.azurecr.io \
+          -u {{ acr_username }} \
+          -p {{ acr_password }}
       register: login_output
+      changed_when: false
 
     - name: Push image to ACR
       ansible.builtin.shell: |
         podman push {{ acr_name }}.azurecr.io/{{ image_name }}:latest
       register: push_output
+      changed_when: false
 
     - name: Show login result
       ansible.builtin.debug:
@@ -20,4 +25,4 @@
 
     - name: Show push result
       ansible.builtin.debug:
-        var: push_output.stdout
+        var: push_output.stdouts
