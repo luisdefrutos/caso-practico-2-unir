@@ -19,7 +19,7 @@ terraform {
 
 resource "azurerm_resource_group" "rg" {
   name     = "rg-cp2"
-  location = "westeurope"
+  location = var.location
   tags     = { environment = "casopractico2" }
 }
 provider "azurerm" {

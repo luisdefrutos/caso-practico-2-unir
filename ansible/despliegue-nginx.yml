@@ -1,0 +1,33 @@
+- name: Despliegue de NGINX desde ACR
+  hosts: localhost
+  become: yes
+  tasks:
+
+    - name: Login en Azure Container Registry
+      ansible.builtin.shell: |
+        podman login containerregistrylfd.azurecr.io \
+          --username 00000000-0000-0000-0000-000000000000 \
+          --password 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IkZYU1M6M1FNWTpZMjZWOkJQR0Y6Q0NORjpRQzNGOkVPUlE6SUJXRDpFUVBVOklUMzQ6RFU1NzpVRTIzIn0.eyJqdGkiOiJjNjE4YmFkYi1kN2RiLTRjZTQtODEwZi1lNmU3YjNjZjNiMTUiLCJzdWIiOiJsdWlzZXN0ZWJhbi5kZWZydXRvczQwOEBjb211bmlkYWR1bmlyLm5ldCIsIm5iZiI6MTc1MTc5MDM3NiwiZXhwIjoxNzUxODAyMDc2LCJpYXQiOjE3NTE3OTAzNzYsImlzcyI6IkF6dXJlIENvbnRhaW5lciBSZWdpc3RyeSIsImF1ZCI6ImNvbnRhaW5lcnJlZ2lzdHJ5bGZkLmF6dXJlY3IuaW8iLCJ2ZXJzaW9uIjoiMS4wIiwicmlkIjoiZTRmN2Y4YTdmNTFmNDRkNWI4MDI4MWNjODFmZTc1ZDYiLCJncmFudF90eXBlIjoicmVmcmVzaF90b2tlbiIsImFwcGlkIjoiMDRiMDc3OTUtOGRkYi00NjFhLWJiZWUtMDJmOWUxYmY3YjQ2IiwidGVuYW50IjoiODk5Nzg5ZGMtMjAyZi00NGI0LTg0NzItYTZkNDBmOWViNDQwIiwicGVybWlzc2lvbnMiOnsiYWN0aW9ucyI6WyJyZWFkIiwid3JpdGUiLCJkZWxldGUiLCJtZXRhZGF0YS9yZWFkIiwibWV0YWRhdGEvd3JpdGUiLCJkZWxldGVkL3JlYWQiLCJkZWxldGVkL3Jlc3RvcmUvYWN0aW9uIl19LCJyb2xlcyI6W119.a7u7R8qlxPY46hlykyJNFat1mRVc0xa89ODkkwRu9s9UWB2FWxYAAFASnkC2mvttH7AtrhPFK8Q6vE948bk4KqyRzlyjGXiJM6z8WEI-3XclJW4RbtGwyN7io_oEY8fP1QNIxoZiM6dA9c6ON5iJLi7vYwUBfPdtrsJoLqmRJi6-BPeiYGvhWUMvoxRjNw6Csl3OH6_F5imFrBfDDR5qhFM3Wof9Ebd1bvoU48-De1_8MHCAGov9O8rOVu4F_7Ifzb8i9dTMM0v-KLxx26PKA_uX84_Zl50khGXCpAGrQuKu31Mf8E4ydT6N8U74SyHF4uiTdjth-HnZGq1bC-zRPw'
+      register: login_output
+
+    - name: Mostrar resultado del login
+      debug:
+        var: login_output.stdout
+
+    - name: Descargar imagen desde ACR
+      ansible.builtin.shell: |
+        podman pull containerregistrylfd.azurecr.io/nginx:latest
+      register: pull_output
+
+    - name: Mostrar resultado del pull
+      debug:
+        var: pull_output.stdout
+
+    - name: Ejecutar contenedor en puerto 8080
+      ansible.builtin.shell: |
+        podman run -d -p 8080:80 containerregistrylfd.azurecr.io/nginx:latest
+      register: run_output
+
+    - name: Mostrar resultado del run
+      debug:
+        var: run_output.stdout
