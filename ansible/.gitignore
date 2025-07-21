@@ -1,0 +1,14 @@
+# Terraform
+*.tfstate
+*.tfstate.backup
+*.tfplan
+.terraform/
+
+# Ansible
+*.retry
+*.env
+
+# Seguridad
+*.pem
+*.key
+*.yml (si contiene tokens)
